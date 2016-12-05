@@ -7,6 +7,8 @@
 namespace Braincrafted\Bundle\BootstrapBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -66,7 +68,7 @@ class BootstrapCollectionType extends AbstractType
             // @codeCoverageIgnoreEnd
         };
 
-        $defaults =  array(
+        $defaults = array(
             'allow_add'          => false,
             'allow_delete'       => false,
             'prototype'          => true,
@@ -80,7 +82,7 @@ class BootstrapCollectionType extends AbstractType
 
 
         // map old class to new one using LegacyFormHelper
-        $defaults['type'] = LegacyFormHelper::getType('text');
+        $defaults['entry_type'] = TextType::class;
 
         $resolver->setDefaults($defaults);
 
@@ -93,7 +95,7 @@ class BootstrapCollectionType extends AbstractType
     public function getParent()
     {
         // map old class to new one using LegacyFormHelper
-        return LegacyFormHelper::getType('collection');
+        return CollectionType::class;
     }
 
     /**
@@ -109,7 +111,8 @@ class BootstrapCollectionType extends AbstractType
      *
      * @return null|string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->getBlockPrefix();
     }
 }
