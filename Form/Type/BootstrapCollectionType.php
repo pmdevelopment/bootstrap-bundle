@@ -105,14 +105,4 @@ class BootstrapCollectionType extends AbstractType
     {
         return 'bootstrap_collection';
     }
-
-    /**
-     * Backward compatibility for SF < 3.0
-     *
-     * @return null|string
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
 }
