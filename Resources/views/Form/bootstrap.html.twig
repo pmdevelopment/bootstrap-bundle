@@ -80,12 +80,6 @@
 
 {% block bootstrap_collection_widget %}
     {% spaceless %}
-        {% set delete_button_text = form.vars.delete_button_text %}
-        {% set add_button_text = form.vars.add_button_text %}
-        {% if translation_domain is not same as (false) %}
-            {% set delete_button_text = delete_button_text|trans({}, translation_domain) %}
-            {% set add_button_text = add_button_text|trans({}, translation_domain) %}
-        {% endif %}
         {% if prototype is defined %}
             {% set prototype_vars = {} %}
             {% if style is defined %}
@@ -93,7 +87,7 @@
             {% endif %}
             {% set prototype_html = '<div class="col-xs-' ~ form.vars.sub_widget_col ~ '">' ~ form_widget(prototype, prototype_vars) ~ '</div>' %}
             {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<div class="col-xs-' ~ form.vars.button_col ~ '"><a href="#" class="' ~ form.vars.delete_button_class ~ '" data-removefield="collection" data-field="__id__">' ~ delete_button_text|parse_icons|raw ~ '</a></div>' %}
+                {% set prototype_html = prototype_html ~ '<div class="col-xs-' ~ form.vars.button_col ~ '"><a href="#" class="btn btn-danger btn-sm" data-removefield="collection" data-field="__id__">' ~ form.vars.delete_button_text|trans({}, translation_domain)|parse_icons|raw ~ '</a></div>' %}
             {% endif %}
             {% set prototype_html = '<div class="row">' ~ prototype_html ~ '</div>' %}
 
@@ -111,7 +105,8 @@
                             </div>
                             {% if form.vars.allow_delete %}
                                 <div class="col-xs-{{ form.vars.button_col }}">
-                                    <a href="#" class="{{ form.vars.delete_button_class }}" data-removefield="collection" data-field="{{ field.vars.id }}">{{ delete_button_text|parse_icons|raw }}</a>
+                                    <a href="#" class="btn btn-danger btn-sm" data-removefield="collection"
+                                       data-field="{{ field.vars.id }}">{{ form.vars.delete_button_text|trans({}, translation_domain)|parse_icons|raw }}</a>
                                 </div>
                             {% endif %}
                         </div>
@@ -119,7 +114,8 @@
                 {% endfor %}
             </ul>
             {% if form.vars.allow_add %}
-                <a href="#" class="{{ form.vars.add_button_class }}" data-addfield="collection" data-collection="{{ form.vars.id }}" data-prototype-name="{{ prototype_name }}">{{ add_button_text|parse_icons|raw }}</a>
+                <a href="#" class="btn btn-primary btn-sm" data-addfield="collection" data-collection="{{ form.vars.id }}"
+                   data-prototype-name="{{ prototype_name }}">{{ form.vars.add_button_text|trans({}, translation_domain)|parse_icons|raw }}</a>
             {% endif %}
         </div>
     {% endspaceless %}
@@ -131,7 +127,7 @@
 
         {% if attr.simple_col is defined and attr.simple_col is not empty %}
             {% set simple_col = attr.simple_col %}
-        {% endif  %}
+        {% endif %}
         {% if attr.col_size is defined and attr.col_size is not empty %}
             {% set col_size = attr.col_size %}
         {% endif %}
@@ -156,7 +152,7 @@
 
         {% if attr.simple_col is defined and attr.simple_col is not empty %}
             {% set simple_col = attr.simple_col %}
-        {% endif  %}
+        {% endif %}
 
         {% if attr.col_size is defined and attr.col_size is not empty %}
             {% set col_size = attr.col_size %}
@@ -189,9 +185,9 @@
         <div {{ block('widget_container_attributes') }}>
             {% for child in form %}
                 {% if multiple %}
-                    {{ checkbox_row(child, { 'no_form_group': true, 'inline' : (attr.inline is defined and attr.inline), 'label_attr': label_attr }) }}
+                    {{ checkbox_row(child, { 'no_form_group': true, 'inline' : (attr.inline is defined and attr.inline), 'label_attr': label_attr, 'translation_domain': choice_translation_domain|default(null) }) }}
                 {% else %}
-                    {{ radio_row(child, { 'no_form_group': true, 'inline' : (attr.inline is defined and attr.inline), 'label_attr': label_attr  }) }}
+                    {{ radio_row(child, { 'no_form_group': true, 'inline' : (attr.inline is defined and attr.inline), 'label_attr': label_attr, 'translation_domain': choice_translation_domain|default(null)  }) }}
                 {% endif %}
             {% endfor %}
         </div>
@@ -204,7 +200,8 @@
 
         <select {{ block('widget_attributes') }}{% if multiple %} multiple="multiple"{% endif %}>
             {% if placeholder is not none %}
-                <option {% if required %} disabled="disabled"{% if value is empty %} selected="selected"{% endif %}{% endif %} value="">{{ placeholder|trans({}, translation_domain) }}</option>
+                <option {% if required %} disabled="disabled"{% if value is empty %} selected="selected"{% endif %}{% endif %}
+                        value="">{{ placeholder|trans({}, translation_domain) }}</option>
             {% endif %}
             {% if preferred_choices|length > 0 %}
                 {% set options = preferred_choices %}
@@ -223,18 +220,13 @@
     {% spaceless %}
         {% for group_label, choice in options %}
             {% if choice is iterable %}
-                <optgroup label="{{ choice_translation_domain is defined ? (choice_translation_domain is same as (false) ? group_label : group_label|trans({}, choice_translation_domain)) : group_label|trans({}, translation_domain) }}">
+                <optgroup
+                        label="{{ choice_translation_domain is defined ? (choice_translation_domain is same as (false) ? group_label : group_label|trans({}, choice_translation_domain)) : group_label|trans({}, translation_domain) }}">
                     {% set options = choice %}
                     {{ block('choice_widget_options') }}
                 </optgroup>
             {% else %}
-                {% set id = null %}
-                {% set attr = (attribute(choice, 'attr') is defined) ? choice.attr : [] %}
-                <option value="{{ choice.value }}"
-                        {% if choice is selectedchoice(value) %} selected="selected"{% endif %}
-                        {{ block('widget_container_attributes') }}>
-                    {{ choice_translation_domain is defined ? (choice_translation_domain is same as (false) ? choice.label : choice.label|trans({}, choice_translation_domain)) : choice.label|trans({}, translation_domain) }}
-                </option>
+                <option value="{{ choice.value }}"{% if choice is selectedchoice(value) %} selected="selected"{% endif %}>{{ choice_translation_domain is defined ? (choice_translation_domain is same as (false) ? choice.label : choice.label|trans({}, choice_translation_domain)) : choice.label|trans({}, translation_domain) }}</option>
             {% endif %}
         {% endfor %}
     {% endspaceless %}
@@ -270,27 +262,27 @@
         {% endif %}
 
         {%set checkboxdata %}
-            {% if label is not same as (false) %}
-                {% if not compound %}
-                    {% set label_attr = label_attr|merge({'for': id}) %}
-                {% endif %}
-                {% if inline is defined and inline %}
-                    {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' checkbox-inline')|trim}) %}
-                {% endif %}
-                {% if required %}
-                    {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
-                {% endif %}
-                {% if label is empty %}
-                    {% set label = name|humanize %}
-                {% endif %}
-                <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
-                {{ block('checkbox_widget') }}
-                {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
-                </label>
-            {% else %}
-                {{ block('checkbox_widget') }}
+        {% if label is not same as (false) %}
+            {% if not compound %}
+                {% set label_attr = label_attr|merge({'for': id}) %}
             {% endif %}
-            {{ form_errors(form) }}
+            {% if inline is defined and inline %}
+                {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' checkbox-inline')|trim}) %}
+            {% endif %}
+            {% if required %}
+                {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+            {% endif %}
+            {% if label is empty %}
+                {% set label = name|humanize %}
+            {% endif %}
+            <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+            {{ block('checkbox_widget') }}
+            {{ block('translate_label') }}
+            </label>
+        {% else %}
+            {{ block('checkbox_widget') }}
+        {% endif %}
+        {{ form_errors(form) }}
         {% endset %}
 
         {% if inline is defined and inline %}
@@ -339,27 +331,28 @@
         {% endif %}
 
         {%set radiodata %}
-            {% if label is not same as (false) %}
-                {% if not compound %}
-                    {% set label_attr = label_attr|merge({'for': id}) %}
-                {% endif %}
-                {% if inline is defined and inline %}
-                    {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' radio-inline')|trim}) %}
-                {% endif %}
-                {% if required %}
-                    {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
-                {% endif %}
-                {% if label is empty %}
-                    {% set label = name|humanize %}
-                {% endif %}
-                <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
-                {{ block('radio_widget') }}
-                {{ translation_domain is same as (false) ? label|raw : label|trans({}, translation_domain)|raw -}}
-                </label>
-            {% else %}
-                {{ block('radio_widget') }}
+        {% if label is not same as (false) %}
+            {% if not compound %}
+                {% set label_attr = label_attr|merge({'for': id}) %}
             {% endif %}
-            {{ form_errors(form) }}
+            {% if inline is defined and inline %}
+                {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' radio-inline')|trim}) %}
+            {% endif %}
+            {% if required %}
+                {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+            {% endif %}
+            {% if label is empty %}
+                {% set label = name|humanize %}
+            {% endif %}
+            <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+            {{ block('radio_widget') }}
+            {{ block('translate_label') }}
+
+            </label>
+        {% else %}
+            {{ block('radio_widget') }}
+        {% endif %}
+        {{ form_errors(form) }}
         {% endset %}
 
         {% if inline is defined and inline %}
@@ -522,13 +515,10 @@
         {% else %}
             {% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' btn btn-'~button_class|default('default'))|trim }) %}
         {% endif %}
-        {% if translation_domain is not same as (false) %}
-            {% set label = label|trans({}, translation_domain) %}
-        {% endif %}
         {% if as_link is defined and as_link == true %}
-            <a {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif -%}{{ label }}</a>
+            <a {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif %}{{ label|trans({}, translation_domain) }}</a>
         {% else %}
-            <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif %}{{ label }}</button>
+            <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{% if attr.icon is defined and attr.icon != '' %}{{ icon(attr.icon) }}{% endif %}{{ label|trans({}, translation_domain) }}</button>
         {% endif %}
     {% endspaceless %}
 {% endblock button_widget %}
@@ -550,7 +540,7 @@
 {% block form_actions_widget %}
     {% for button in form.children %}
         {{ form_widget(button) }}&nbsp; {# this needs to be here due to https://github.com/twbs/bootstrap/issues/3245 #}
-    {% endfor  %}
+    {% endfor %}
 {% endblock %}
 
 {% block bs_static_widget %}
@@ -598,10 +588,7 @@
             {% if label is empty %}
                 {% set label = name|humanize %}
             {% endif %}
-            {% if translation_domain is not same as (false) %}
-                {% set label = label|trans({}, translation_domain) %}
-            {% endif %}
-            <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|raw }}</label>
+            <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain)|raw }}</label>
         {% endif %}
     {% endspaceless %}
 {% endblock form_label %}
@@ -674,10 +661,10 @@
             {% set ig_size_class = '' %}
             {% if input_group.size is defined and input_group.size == 'large' %}
                 {% set ig_size_class = ' input-group-lg' %}
-            {% endif  %}
+            {% endif %}
             {% if input_group.size is defined and input_group.size == 'small' %}
                 {% set ig_size_class = ' input-group-sm' %}
-            {% endif  %}
+            {% endif %}
             <div class="input-group{{ ig_size_class }}">
                 {% if input_group.prepend is defined and input_group.prepend is not empty %}
                     <span class="input-group-addon">{{ input_group.prepend|raw|parse_icons }}</span>
@@ -751,7 +738,7 @@
 {% endblock hidden_row %}
 
 {% block form_actions_row %}
-    {{ block('button_row')  }}
+    {{ block('button_row') }}
 {% endblock %}
 
 {# Misc #}
@@ -831,7 +818,7 @@
         {% if bootstrap_get_simple_col() %}
             {{ bootstrap_set_simple_col(false) }}
         {% endif %}
-        {{ bootstrap_restore_form_settings() }}
+    {{ bootstrap_restore_form_settings() }}
     {% endspaceless %}
 {% endblock form_end %}
 
@@ -931,3 +918,7 @@
     id="{{ id }}" name="{{ full_name }}"{% if disabled %} disabled="disabled"{% endif %}
     {%- for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}
 {% endblock button_attributes %}
+
+{% block translate_label %}
+    {% if false == translation_domain %}{{ label|raw -}}{% else %}{{ label|trans({}, translation_domain)|raw -}}{% endif %}
+{% endblock %}
