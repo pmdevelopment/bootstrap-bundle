@@ -9,13 +9,18 @@
             "name":     "Florian Eckerstorfer",
             "email":    "florian@eckerstorfer.co",
             "homepage": "http://florian.ec"
+        },
+        {
+            "name":     "Sven Joder",
+            "email":    "sj@pmdevelopment.de",
+            "homepage": "http://www.pmdevelopment.de"
         }
     ],
     "require":      {
         "php":                      ">=5.3.3",
         "symfony/framework-bundle": "~2.6|~3.0",
         "symfony/twig-bundle":      "~2.6|~3.0",
-        "symfony/form":             "~2.6|~3.0",
+        "symfony/form":             "~2.8|~3.0",
         "symfony/console":          "~2.6|~3.0",
         "symfony/finder":           "~2.6|~3.0",
         "twig/twig":                "~1.12|~2.0@dev"
