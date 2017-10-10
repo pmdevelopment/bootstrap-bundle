@@ -16,6 +16,24 @@ Fixes missing `choice_translation_domain` in expanded `ChoiceType`
 ### 2.2.1
 Fixes Symfony3 deprecations 
 
+## Setup
+
+Update your `composer.json`:
+
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packagist.org"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/pmdevelopment/bootstrap-bundle"
+        },
+        ...
+    ],
+    "require": {
+        "braincrafted/bootstrap-bundle": "^2.2.2"
+    }
 
 License
 -------
