@@ -10,6 +10,9 @@ Forked to continue development of this bundle.
 
 ## Releases
 
+### 2.2.3
+Adds boolean `sortable` setting for `BootstrapCollectionType`. Requires FontAwesome to display arrow up/down.
+
 ### 2.2.2
 Fixes missing `choice_translation_domain` in expanded `ChoiceType`
 
