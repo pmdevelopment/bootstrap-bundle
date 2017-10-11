@@ -9,12 +9,10 @@ namespace Braincrafted\Bundle\BootstrapBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Braincrafted\Bundle\BootstrapBundle\Util\LegacyFormHelper;
 
 /**
  * BootstrapCollectionType
@@ -35,15 +33,16 @@ class BootstrapCollectionType extends AbstractType
     {
         $view->vars = array_replace(
             $view->vars,
-            array(
+            [
                 'allow_add'          => $options['allow_add'],
                 'allow_delete'       => $options['allow_delete'],
                 'add_button_text'    => $options['add_button_text'],
                 'delete_button_text' => $options['delete_button_text'],
                 'sub_widget_col'     => $options['sub_widget_col'],
                 'button_col'         => $options['button_col'],
-                'prototype_name'     => $options['prototype_name']
-            )
+                'prototype_name'     => $options['prototype_name'],
+                'sortable'           => $options['sortable'],
+            ]
         );
 
         if (false === $view->vars['allow_delete']) {
@@ -68,7 +67,7 @@ class BootstrapCollectionType extends AbstractType
             // @codeCoverageIgnoreEnd
         };
 
-        $defaults = array(
+        $defaults = [
             'allow_add'          => false,
             'allow_delete'       => false,
             'prototype'          => true,
@@ -77,8 +76,9 @@ class BootstrapCollectionType extends AbstractType
             'delete_button_text' => 'Delete',
             'sub_widget_col'     => 10,
             'button_col'         => 2,
-            'options'            => array(),
-        );
+            'options'            => [],
+            'sortable'           => false,
+        ];
 
 
         // map old class to new one using LegacyFormHelper

@@ -80,22 +80,39 @@
 
 {% block bootstrap_collection_widget %}
     {% spaceless %}
+        {% if form.vars.sortable is defined and true == form.vars.sortable %}
+            {% set sortable = true %}
+        {% else %}
+            {% set sortable = false %}
+        {% endif %}
+
         {% if prototype is defined %}
             {% set prototype_vars = {} %}
             {% if style is defined %}
                 {% set prototype_vars = prototype_vars|merge({'style': style}) %}
             {% endif %}
             {% set prototype_html = '<div class="col-xs-' ~ form.vars.sub_widget_col ~ '">' ~ form_widget(prototype, prototype_vars) ~ '</div>' %}
-            {% if form.vars.allow_delete %}
-                {% set prototype_html = prototype_html ~ '<div class="col-xs-' ~ form.vars.button_col ~ '"><a href="#" class="btn btn-danger btn-sm" data-removefield="collection" data-field="__id__">' ~ form.vars.delete_button_text|trans({}, translation_domain)|parse_icons|raw ~ '</a></div>' %}
+            {% if form.vars.allow_delete or sortable %}
+                {% set prototype_html = prototype_html ~ '<div class="col-xs-' ~ form.vars.button_col ~ '">' %}
+
+                {% if form.vars.allow_delete %}
+                    {% set prototype_html = prototype_html ~ '<a href="#" class="btn btn-danger btn-sm" data-removefield="collection" data-field="__id__">' ~ form.vars.delete_button_text|trans({}, translation_domain)|parse_icons|raw ~ '</a>' %}
+                {% endif %}
+
+                {% if sortable %}
+                    {% set prototype_html = prototype_html ~ '<div class="pull-right"><a href="#up" data-movefield="collection"><i class="fa fa-chevron-up text-muted"></i></a><a href="#down" data-movefield="collection"><i class="fa fa-chevron-down text-muted"></i></a></div>' %}
+                {% endif %}
+
+                {% set prototype_html = prototype_html ~ '</div>' %}
             {% endif %}
             {% set prototype_html = '<div class="row">' ~ prototype_html ~ '</div>' %}
 
             {% set attr = attr|merge({'data-prototype': prototype_html }) %}
             {% set attr = attr|merge({'data-prototype-name': prototype_name }) %}
         {% endif %}
+
         <div {{ block('widget_container_attributes') }}>
-            <ul class="bc-collection list-unstyled">
+            <ul class="bc-collection list-unstyled{% if sortable %} bc-collection-sortable{% endif %}">
                 {% for field in form %}
                     <li>
                         <div class="row">
@@ -103,10 +120,18 @@
                                 {{ form_widget(field) }}
                                 {{ form_errors(field) }}
                             </div>
-                            {% if form.vars.allow_delete %}
+                            {% if form.vars.allow_delete or sortable %}
                                 <div class="col-xs-{{ form.vars.button_col }}">
-                                    <a href="#" class="btn btn-danger btn-sm" data-removefield="collection"
-                                       data-field="{{ field.vars.id }}">{{ form.vars.delete_button_text|trans({}, translation_domain)|parse_icons|raw }}</a>
+                                    {% if form.vars.allow_delete %}
+                                        <a href="#" class="btn btn-danger btn-sm" data-removefield="collection"
+                                           data-field="{{ field.vars.id }}">{{ form.vars.delete_button_text|trans({}, translation_domain)|parse_icons|raw }}</a>
+                                    {% endif %}
+                                    {% if sortable %}
+                                        <div class="pull-right">
+                                            <a href="#up" data-movefield="collection"><i class="fa fa-chevron-up text-muted"></i></a>
+                                            <a href="#down" data-movefield="collection"><i class="fa fa-chevron-down text-muted"></i></a>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             {% endif %}
                         </div>
